@@ -74,7 +74,7 @@ export default {
     const currentPage = ref(1);
     const itemsPerPage = 5;
 
-    const apiBase = import.meta.env.VITE_API_BASE || 'http://localhost:3001';
+    const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
     const token = props.token || localStorage.getItem('token') || null;
 
     axios.defaults.baseURL = apiBase;
@@ -99,7 +99,10 @@ export default {
     async function loadHistory() {
       try {
         const res = await axios.get('/api/history');
-        history.value = res.data.map(r => ({ ...r, short_url: r.short_code ? `${apiBase}/${r.short_code}` : '' }));
+        history.value = res.data.map(r => ({ 
+          ...r, 
+          short_url: r.short_code ? `${apiBase.replace('/api', '')}/${r.short_code}` : '' 
+        }));
         // Reset to page 1 when history changes
         currentPage.value = 1;
       } catch (e) {

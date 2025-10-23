@@ -117,7 +117,7 @@ export default {
     const editingId = ref(null);
     const editingTitle = ref('');
     const titleInput = ref(null);
-    const apiBase = import.meta.env.VITE_API_BASE || 'http://localhost:3001';
+    const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
     const analyticsBase = import.meta.env.VITE_ANALYTICS_API || 'http://localhost:4001';
 
     const totalPages = computed(() => Math.ceil(stats.value.length / itemsPerPage));
@@ -157,12 +157,18 @@ export default {
             const analyticsRes = await axios.get(`${analyticsBase}/stats/${link.short_code}`);
             return {
               ...link,
-              short_url: `${apiBase}/${link.short_code}`,
+              short_url: `${apiBase.replace('/api', '')}/${link.short_code}`,
               click_count: analyticsRes.data.click_count || 0
             };
           } catch (e) {
             // If stats not available, return 0
             return {
+              ...link,
+              short_url: `${apiBase.replace('/api', '')}/${link.short_code}`,
+              click_count: 0
+            };
+          }
+        });
               ...link,
               short_url: `${apiBase}/${link.short_code}`,
               click_count: 0

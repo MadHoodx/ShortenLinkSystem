@@ -23,7 +23,7 @@ export default {
   components: { AuthModal, Navbar },
   setup() {
     const token = ref(localStorage.getItem('token') || null);
-    const apiBase = import.meta.env.VITE_API_BASE || 'http://localhost:3001';
+    const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
     const showAuth = ref(false);
     function onLoginSuccess(t){
       token.value = t;
