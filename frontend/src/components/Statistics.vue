@@ -215,7 +215,7 @@ export default {
       if (!confirmed) return;
 
       try {
-        await axios.delete(`${apiBase}/api/urls/${stat.id}`, {
+        await axios.delete(`${apiBase}/urls/${stat.id}`, {
           headers: { 'Authorization': `Bearer ${props.token}` }
         });
         
