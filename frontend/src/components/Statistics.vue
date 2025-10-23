@@ -60,8 +60,8 @@
           
           <div class="stat-body">
             <div class="stat-item">
-              <div class="stat-label">Total Clicks</div>
-              <div class="stat-value">{{ stat.click_count || 0 }}</div>
+              <div class="stat-label">Total Visits</div>
+              <div class="stat-value">{{ stat.visit_count || 0 }}</div>
             </div>
             <div class="stat-item">
               <div class="stat-label">Created</div>
@@ -156,13 +156,13 @@ export default {
             return {
               ...link,
               short_url: `${apiBase.replace('/api', '')}/${link.short_code}`,
-              click_count: analyticsRes.data.click_count || 0
+              visit_count: analyticsRes.data.click_count || 0
             };
           } catch (e) {
             return {
               ...link,
               short_url: `${apiBase.replace('/api', '')}/${link.short_code}`,
-              click_count: 0
+              visit_count: 0
             };
           }
         });
