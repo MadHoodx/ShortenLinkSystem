@@ -14,6 +14,13 @@ This is a microservice for generating short links: it receives the full URL (ful
  - GET /api/history  — returns recent shortened URLs
  - GET /:code       — redirect to original URL
  - GET /health      — basic health check
+ - POST /api/auth/register — register { email, password }
+ - POST /api/auth/login    — login { email, password } -> returns JWT
+
+History behavior
+- If request includes a valid JWT (Authorization: Bearer <token>), history is per-user (owner_id).
+- Otherwise the service will use a `device_id` cookie (created automatically) to keep per-device history.
+
 
  DB table
 

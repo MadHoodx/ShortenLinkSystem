@@ -1,12 +1,24 @@
-import { insertUrl, listHistory } from '../models/url-models.js';
+import { insertUrl, listHistory, listHistoryByOwner, listHistoryByDevice } from '../models/url-models.js';
 import QRCode from 'qrcode';
 import { generateCode } from '../utils/generateCode.js';
 import pool from '../config/db.js';
+import { v4 as uuidv4 } from 'uuid';
 
 // Create a short URL
 export async function shorten(req, res) {
   const { full_url } = req.body;
   if (!full_url) return res.status(400).json({ error: 'full_url is required' });
+
+  // validate URL format (require http or https)
+  try {
+    const parsed = new URL(full_url);
+    if (!['http:', 'https:'].includes(parsed.protocol)) {
+      return res.status(400).json({ error: 'full_url must use http or https' });
+    }
+    if (full_url.length > 2000) return res.status(400).json({ error: 'full_url too long' });
+  } catch (e) {
+    return res.status(400).json({ error: 'invalid full_url format' });
+  }
 
   try {
     // generate unique code 
@@ -17,7 +29,17 @@ export async function shorten(req, res) {
       if (rows.length === 0) break; // unique
     }
 
-    const id = await insertUrl(full_url, short_code);
+    // owner_id from authenticated user (if any)
+    const owner_id = req.user?.id || null;
+    // device_id from cookie (if any)
+    let device_id = req.cookies?.device_id || null;
+    if (!owner_id && !device_id) {
+      device_id = uuidv4();
+      // set cookie so subsequent requests include it
+      res.cookie('device_id', device_id, { httpOnly: false, sameSite: 'lax', maxAge: 31536000000 }); // 1 year
+    }
+
+    const id = await insertUrl(full_url, short_code, owner_id, device_id);
     const short_url = `${process.env.BASE_URL}/${short_code}`;
     const qr_code = await QRCode.toDataURL(short_url);
 
@@ -30,7 +52,14 @@ export async function shorten(req, res) {
 
 export async function history(req, res) {
   try {
-    const rows = await listHistory();
+    if (req.user && req.user.id) {
+      const rows = await listHistoryByOwner(req.user.id);
+      return res.json(rows);
+    }
+
+    const deviceId = req.cookies?.device_id;
+    if (!deviceId) return res.json([]);
+    const rows = await listHistoryByDevice(deviceId);
     return res.json(rows);
   } catch (err) {
     console.error(err);
