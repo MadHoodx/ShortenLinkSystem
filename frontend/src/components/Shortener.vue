@@ -98,7 +98,7 @@ export default {
 
     async function loadHistory() {
       try {
-        const res = await axios.get('/api/history');
+        const res = await axios.get('/history');
         history.value = res.data.map(r => ({ 
           ...r, 
           short_url: r.short_code ? `${apiBase.replace('/api', '')}/${r.short_code}` : '' 
@@ -120,7 +120,7 @@ export default {
         return alert('Invalid URL format');
       }
       try {
-        const res = await axios.post('/api/shorten', { 
+        const res = await axios.post('/shorten', { 
           full_url: fullUrl.value,
           title: title.value || null
         });
