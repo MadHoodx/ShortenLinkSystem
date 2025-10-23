@@ -7,8 +7,9 @@ import { getStats, getEvents } from './controllers/eventController.js';
 
 dotenv.config();
 const app = express();
+const CORS_ORIGIN = process.env.CORS_ORIGIN || 'http://localhost:5173';
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: CORS_ORIGIN,
   credentials: true
 }));
 app.use(bodyParser.json());
