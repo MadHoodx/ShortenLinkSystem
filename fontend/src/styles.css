@@ -9,7 +9,19 @@
 *{box-sizing:border-box}
 body{font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial; background:var(--bg); color:var(--text); margin:0; padding:24px}
 .container{max-width:760px;margin:28px auto}
+
+body { padding-top:64px }
+.navbar{ position:fixed; top:0; left:0; right:0; z-index:40 }
 header h1{margin:0;font-size:46px;text-align:center;font-weight:700}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.auth-button{background:transparent;border:1px solid rgba(37,99,235,0.12);padding:8px 12px;border-radius:8px;color:var(--accent);cursor:pointer}
+.modal-backdrop{position:fixed;inset:0;background:rgba(2,6,23,0.6);display:flex;align-items:center;justify-content:center}
+.modal{background:var(--card);padding:20px;border-radius:12px;min-width:320px;max-width:420px}
+.tabs{display:flex;gap:8px;margin-bottom:12px}
+.tab{flex:1;padding:8px;border-radius:8px;text-align:center;background:#f3f4f6;cursor:pointer}
+.tab.active{background:var(--accent);color:#fff}
+.modal input{width:100%;padding:10px;margin:6px 0;border-radius:8px;border:1px solid #ddd}
+.modal button{width:100%;padding:10px;border-radius:8px;background:var(--accent);color:#fff;border:none}
 .muted{color:var(--muted)}
 .card{background:var(--card);padding:20px;border-radius:var(--radius);box-shadow:0 6px 18px rgba(15,23,42,0.06)}
 .hero{padding:18px 0 8px}
