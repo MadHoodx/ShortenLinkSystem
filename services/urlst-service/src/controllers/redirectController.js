@@ -10,9 +10,12 @@ export async function redirectTo(req, res) {
     // notify analytics-service 
     if (process.env.ANALYTICS_URL) {
       axios.post(process.env.ANALYTICS_URL, {
+        event_type: 'redirect',
         short_code: code,
-        ip_address: req.ip,
-        user_agent: req.headers['user-agent'] || '',
+        payload: {
+          ip_address: req.ip,
+          user_agent: req.headers['user-agent'] || '',
+        }
       }).catch((e) => console.error('Analytics error:', e.message));
     }
 

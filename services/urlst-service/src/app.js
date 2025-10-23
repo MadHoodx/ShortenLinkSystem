@@ -11,9 +11,8 @@ dotenv.config();
 const app = express();
 
 app.set('trust proxy', true);
-// Allow CORS from local frontend 
-const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || 'http://localhost:5173';
-app.use(cors({ origin: FRONTEND_ORIGIN, credentials: true }));
+const CORS_ORIGIN = process.env.CORS_ORIGIN || 'http://localhost:5173';
+app.use(cors({ origin: CORS_ORIGIN, credentials: true }));
 app.use(cookieParser());
 app.use(express.json());
 
