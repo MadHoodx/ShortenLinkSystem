@@ -246,7 +246,7 @@ export default {
 
     async function saveTitle(stat) {
       try {
-        await axios.patch(`${apiBase}/api/urls/${stat.id}`, 
+        await axios.patch(`${apiBase}/urls/${stat.id}`, 
           { title: editingTitle.value || null },
           { headers: { 'Authorization': `Bearer ${props.token}` } }
         );
