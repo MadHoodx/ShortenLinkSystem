@@ -45,7 +45,7 @@ export default {
       if (!emailRe.test(email.value)) return alert('Please enter a valid email');
       if (!password.value || password.value.length < 8) return alert('Password must be at least 8 characters');
       try {
-        const res = await axios.post(`${props.apiBase}/login`, { email: email.value, password: password.value }, { withCredentials: true });
+        const res = await axios.post(`${props.apiBase}/auth/login`, { email: email.value, password: password.value }, { withCredentials: true });
         const t = res.data.token;
         props.setToken(t);
         localStorage.setItem('token', t);
@@ -65,7 +65,7 @@ export default {
       const pwdRe = /(?=.*[A-Za-z])(?=.*\d)/;
       if (!pwdRe.test(regPassword.value)) return alert('Password must include letters and numbers');
       try {
-        const res = await axios.post(`${props.apiBase}/register`, { email: regEmail.value, password: regPassword.value }, { withCredentials: true });
+        const res = await axios.post(`${props.apiBase}/auth/register`, { email: regEmail.value, password: regPassword.value }, { withCredentials: true });
         if (res.status === 201) {
           alert('Registered, you can now login');
         } else {
