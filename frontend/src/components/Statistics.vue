@@ -143,15 +143,13 @@ export default {
 
       loading.value = true;
       try {
-        // First get user's links from urlst-service
-        const res = await axios.get(`${apiBase}/api/history`, {
+        const res = await axios.get(`${apiBase}/history`, {
           headers: { 'Authorization': `Bearer ${props.token}` },
           withCredentials: true
         });
 
         const links = res.data;
 
-        // Then fetch click count for each link from analytics-service
         const statsPromises = links.map(async (link) => {
           try {
             const analyticsRes = await axios.get(`${analyticsBase}/stats/${link.short_code}`);
@@ -161,7 +159,6 @@ export default {
               click_count: analyticsRes.data.click_count || 0
             };
           } catch (e) {
-            // If stats not available, return 0
             return {
               ...link,
               short_url: `${apiBase.replace('/api', '')}/${link.short_code}`,
@@ -169,15 +166,8 @@ export default {
             };
           }
         });
-              ...link,
-              short_url: `${apiBase}/${link.short_code}`,
-              click_count: 0
-            };
-          }
-        });
 
         stats.value = await Promise.all(statsPromises);
-        // Reset to page 1 when stats change
         currentPage.value = 1;
       } catch (e) {
         console.error('Failed to load statistics:', e);
