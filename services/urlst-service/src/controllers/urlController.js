@@ -1,4 +1,4 @@
-import { insertUrl, listHistory, listHistoryByOwner, listHistoryByDevice } from '../models/url-models.js';
+import { insertUrl, listHistory, listHistoryByOwner, listHistoryByDevice, deleteUrl } from '../models/url-models.js';
 import QRCode from 'qrcode';
 import { generateCode } from '../utils/generateCode.js';
 import pool from '../config/db.js';
@@ -38,9 +38,9 @@ export async function shorten(req, res) {
       // set cookie so subsequent requests include it
       res.cookie('device_id', device_id, { 
         httpOnly: false,
-        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'Lax',
-        secure: process.env.NODE_ENV === 'production',
-        maxAge: 31536000000 }); 
+         sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+         secure: process.env.NODE_ENV === 'production',
+         maxAge: 31536000000 });
     }
 
     const id = await insertUrl(full_url, short_code, owner_id, device_id, title || null);
@@ -65,6 +65,31 @@ export async function history(req, res) {
     if (!deviceId) return res.json([]);
     const rows = await listHistoryByDevice(deviceId);
     return res.json(rows);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'Server error' });
+  }
+}
+
+export async function remove(req, res) {
+  try {
+    // Require authentication
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ error: 'URL ID is required' });
+    }
+
+    const affectedRows = await deleteUrl(id, req.user.id);
+    
+    if (affectedRows === 0) {
+      return res.status(404).json({ error: 'URL not found or unauthorized' });
+    }
+
+    return res.json({ message: 'URL deleted successfully' });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: 'Server error' });
